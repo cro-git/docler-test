@@ -4,6 +4,9 @@
 namespace App\Domain;
 
 
+use App\Domain\Event\NewUserHasBeenCreated;
+use App\Domain\Event\UserHasBeenDeleted;
+use App\Domain\Event\UserHasBeenUpdated;
 use App\Domain\User\UserId;
 use App\Domain\User\UserName;
 
@@ -22,6 +25,7 @@ class User
      */
     public function __construct(UserId $id, UserName $name)
     {
+        // Todo: check if the userId is valid
         $this->id = $id;
         $this->name = $name;
     }
@@ -33,15 +37,20 @@ class User
     public function changeName(UserName $name)
     {
         $this->name = $name;
+        event(new UserHasBeenUpdated($this));
         return $this;
     }
 
     public static function create(UserName $name)
     {
-        return new User(
-            UserId::generate(),
-            $name
-        );
+        $user = new User(UserId::generate(), $name);
+        event(new NewUserHasBeenCreated($user));
+        return $user;
+    }
+
+    public function delete()
+    {
+        event(new UserHasBeenDeleted($this));
     }
 
     public function getId()
