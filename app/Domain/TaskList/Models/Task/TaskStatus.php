@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Domain\Task;
+namespace App\Domain\TaskList\Models\Task;
 
 
 use Assert\Assert;

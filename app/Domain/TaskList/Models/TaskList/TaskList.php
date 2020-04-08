@@ -1,12 +1,11 @@
 <?php
 
 
-namespace App\Domain;
+namespace App\Domain\TaskList\Models\TaskList;
 
-use App\Domain\Task\TaskStatus;
-use App\Domain\TaskList\TaskListId;
-use App\Domain\TaskList\TaskListName;
-use App\Domain\User\UserId;
+use App\Domain\TaskList\Models\Task\Task;
+use App\Domain\TaskList\Models\Task\TaskStatus;
+use App\Domain\TaskList\Models\User\UserId;
 use ArrayIterator;
 
 class TaskList

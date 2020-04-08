@@ -1,7 +1,8 @@
 <?php
 
 
-namespace App\Domain\Task;
+namespace App\Domain\TaskList\Models\Task;
+
 
 
 use App\Domain\Base\StringType;

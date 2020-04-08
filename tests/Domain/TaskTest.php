@@ -5,11 +5,11 @@ namespace Tests\Domain;
 
 
 use App\Domain\Base\UuidType;
-use App\Domain\Task;
-use App\Domain\Task\TaskDescription;
-use App\Domain\Task\TaskDueDate;
-use App\Domain\Task\TaskId;
-use App\Domain\Task\TaskStatus;
+use App\Domain\TaskList\Models\Task\Task;
+use App\Domain\TaskList\Models\Task\TaskDescription;
+use App\Domain\TaskList\Models\Task\TaskDueDate;
+use App\Domain\TaskList\Models\Task\TaskId;
+use App\Domain\TaskList\Models\Task\TaskStatus;
 use DateInterval;
 use DateTime;
 use Tests\TestCase;

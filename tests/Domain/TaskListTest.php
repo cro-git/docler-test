@@ -4,17 +4,17 @@
 namespace Tests\Domain;
 
 
-use App\Domain\Task;
-use App\Domain\Task\TaskDescription;
-use App\Domain\Task\TaskDueDate;
-use App\Domain\Task\TaskId;
-use App\Domain\Task\TaskStatus;
-use App\Domain\TaskList;
-use App\Domain\TaskList\TaskListId;
-use App\Domain\TaskList\TaskListName;
-use App\Domain\User;
-use App\Domain\User\UserId;
-use App\Domain\User\UserName;
+use App\Domain\TaskList\Models\Task\Task;
+use App\Domain\TaskList\Models\Task\TaskDescription;
+use App\Domain\TaskList\Models\Task\TaskDueDate;
+use App\Domain\TaskList\Models\Task\TaskId;
+use App\Domain\TaskList\Models\Task\TaskStatus;
+use App\Domain\TaskList\Models\TaskList\TaskList;
+use App\Domain\TaskList\Models\TaskList\TaskListId;
+use App\Domain\TaskList\Models\TaskList\TaskListName;
+use App\Domain\TaskList\Models\User\User;
+use App\Domain\TaskList\Models\User\UserId;
+use App\Domain\TaskList\Models\User\UserName;
 use ArrayIterator;
 use DateInterval;
 use DateTime;
@@ -85,6 +85,10 @@ class TaskListTest extends TestCase
         $this->assertEquals(1,$l2->getTodayTasks()->count());
     }
 
+    /**
+     * @param UserName $name
+     * @return User
+     */
     private function createUser(UserName $name)
     {
         return new User(

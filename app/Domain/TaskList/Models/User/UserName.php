@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Domain\User;
+namespace App\Domain\TaskList\Models\User;
 
 use Assert\Assertion;
 

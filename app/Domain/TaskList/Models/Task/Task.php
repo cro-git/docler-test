@@ -1,13 +1,7 @@
 <?php
 
 
-namespace App\Domain;
-
-
-use App\Domain\Task\TaskDescription;
-use App\Domain\Task\TaskDueDate;
-use App\Domain\Task\TaskId;
-use App\Domain\Task\TaskStatus;
+namespace App\Domain\TaskList\Models\Task;
 
 class Task
 {

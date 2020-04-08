@@ -1,12 +1,12 @@
 <?php
 
 
-namespace App\Domain\Task;
+namespace App\Domain\TaskList\Models\TaskList;
 
 
 use App\Domain\Base\UuidType;
 
-class TaskId extends UuidType
+class TaskListId extends UuidType
 {
 
     /**
@@ -14,6 +14,6 @@ class TaskId extends UuidType
      */
     public function getType()
     {
-        return 'TaskId';
+        return 'TaskListId';
     }
 }

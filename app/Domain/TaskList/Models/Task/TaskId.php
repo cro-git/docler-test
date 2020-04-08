@@ -1,18 +1,19 @@
 <?php
 
 
-namespace App\Domain\User;
+namespace App\Domain\TaskList\Models\Task;
 
 
 use App\Domain\Base\UuidType;
 
-class UserId extends UuidType
+class TaskId extends UuidType
 {
+
     /**
      * @inheritDoc
      */
     public function getType()
     {
-        return 'UserID';
+        return 'TaskId';
     }
 }

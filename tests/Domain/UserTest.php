@@ -3,11 +3,12 @@
 
 namespace Tests\Domain;
 
-use App\Domain\Event\NewUserHasBeenCreated;
-use App\Domain\Event\UserHasBeenDeleted;
-use App\Domain\Event\UserHasBeenUpdated;
-use App\Domain\User;
-use App\Domain\User\UserName;
+use App\Domain\TaskList\Event\User\NewUserHasBeenCreated;
+use App\Domain\TaskList\Event\User\UserHasBeenDeleted;
+use App\Domain\TaskList\Event\User\UserHasBeenUpdated;
+use App\Domain\TaskList\Models\User\User;
+use App\Domain\TaskList\Models\User\UserId;
+use App\Domain\TaskList\Models\User\UserName;
 use Event;
 use Tests\TestCase;
 
@@ -49,6 +50,30 @@ class UserTest extends TestCase
      */
     public function testUser()
     {
+        $u1 = User::create(new UserName('Mario','Rossi'));
+        $u2 = User::create(new UserName('Mario','Rossi'));
+
+        $u3 = new User($u1->getId(),$u1->getName());
+        $u4 = new User($u1->getId(),new UserName('Paolo','Draghi'));
+
+        // Check if the name is assigned correctly to the user
+        $this->assertEquals('Mario Rossi',$u1->getName()->getFullName());
+
+        // Check if equals works as expected
+        $this->assertFalse($u1->equals($u2));
+        $this->assertTrue($u1->equals($u3));
+        $this->assertTrue($u1->equals($u4));
+
+        // Check if the name change correctly when we change name
+        $u1->changeName(new UserName('Giovanni','Belvedere'));
+        $this->assertEquals('Giovanni Belvedere',$u1->getName()->getFullName());
+
+        // Check if the comparison works again even when we change name
+        $this->assertTrue($u1->equals($u3));
+    }
+
+    public function testEvents()
+    {
         // We lister for the possible dispatched event, so we can be sure that the User is dispatching event correctly
         Event::fake([
             UserHasBeenDeleted::class,
@@ -68,30 +93,20 @@ class UserTest extends TestCase
 
         Event::assertNotDispatched(UserHasBeenUpdated::class);
 
-        $u3 = new User($u1->getId(),$u1->getName());
-        $u4 = new User($u1->getId(),new UserName('Paolo','Draghi'));
+        new User($u1->getId(),$u1->getName());
+        new User(UserId::generate(),new UserName('Paolo','Draghi'));
         Event::assertDispatched(NewUserHasBeenCreated::class,2); // We didn't create the User, so we should have 2 event ( for the 2 previus creation )
-
-        // Check if the name is assigned correctly to the user
-        $this->assertEquals('Mario Rossi',$u1->getName()->getFullName());
-
-        // Check if equals works as expected
-        $this->assertFalse($u1->equals($u2));
-        $this->assertTrue($u1->equals($u3));
-        $this->assertTrue($u1->equals($u4));
 
         // No previous "hasBeenUpdated" event fired
         Event::assertNotDispatched(UserHasBeenUpdated::class);
 
         // Check if the name change correctly when we change name
         $u1->changeName(new UserName('Giovanni','Belvedere'));
-        $this->assertEquals('Giovanni Belvedere',$u1->getName()->getFullName());
         Event::assertDispatched(UserHasBeenUpdated::class,function ($event) use ($u1)
         {
             return $u1->equals($event->user);
         });
 
-        // Check if the comparison works again even when we change name
-        $this->assertTrue($u1->equals($u3));
+        Event::assertNotDispatched(UserHasBeenDeleted::class);
     }
 }

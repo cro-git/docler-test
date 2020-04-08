@@ -1,14 +1,13 @@
 <?php
 
 
-namespace App\Domain;
+namespace App\Domain\TaskList\Models\User;
 
 
-use App\Domain\Event\NewUserHasBeenCreated;
-use App\Domain\Event\UserHasBeenDeleted;
-use App\Domain\Event\UserHasBeenUpdated;
-use App\Domain\User\UserId;
-use App\Domain\User\UserName;
+use App\Domain\TaskList\Event\User\NewUserHasBeenCreated;
+use App\Domain\TaskList\Event\User\UserHasBeenDeleted;
+use App\Domain\TaskList\Event\User\UserHasBeenUpdated;
+
 
 class User
 {
