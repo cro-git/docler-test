@@ -10,6 +10,7 @@ use App\Domain\TaskList\Models\Task\TaskDescription;
 use App\Domain\TaskList\Models\Task\TaskDueDate;
 use App\Domain\TaskList\Models\Task\TaskId;
 use App\Domain\TaskList\Models\Task\TaskStatus;
+use App\Domain\TaskList\Models\TaskList\TaskListId;
 use DateInterval;
 use DateTime;
 use Tests\TestCase;
@@ -45,19 +46,22 @@ class TaskTest extends TestCase
             TaskId::generate(),
             new TaskDescription('test'),
             TaskStatus::create(TaskStatus::TODO),
-            new TaskDueDate(new DateTime())
+            new TaskDueDate(new DateTime()),
+            TaskListId::generate()
         );
         $t2 = new Task(
             TaskId::generate(),
             new TaskDescription('test2'),
             TaskStatus::create(TaskStatus::TODO),
-            new TaskDueDate(new DateTime())
+            new TaskDueDate(new DateTime()),
+            TaskListId::generate()
         );
         $t3 = new Task(
             TaskId::fromString($t1->getId()->getValue()),
             new TaskDescription('test3'),
             TaskStatus::create(TaskStatus::DONE),
-            new TaskDueDate((new DateTime())->add(new DateInterval('P1D')))
+            new TaskDueDate((new DateTime())->add(new DateInterval('P1D'))),
+            TaskListId::generate()
         );
 
         // Check if the task store the id correctly

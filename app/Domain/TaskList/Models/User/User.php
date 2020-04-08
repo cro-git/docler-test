@@ -4,9 +4,10 @@
 namespace App\Domain\TaskList\Models\User;
 
 
-use App\Domain\TaskList\Event\User\NewUserHasBeenCreated;
+use App\Domain\TaskList\Event\User\UserHasBeenCreated;
 use App\Domain\TaskList\Event\User\UserHasBeenDeleted;
 use App\Domain\TaskList\Event\User\UserHasBeenUpdated;
+use App\Domain\TaskList\Repository\UsersRepositoryInterface;
 
 
 class User
@@ -24,7 +25,6 @@ class User
      */
     public function __construct(UserId $id, UserName $name)
     {
-        // Todo: check if the userId is valid
         $this->id = $id;
         $this->name = $name;
     }
@@ -43,7 +43,7 @@ class User
     public static function create(UserName $name)
     {
         $user = new User(UserId::generate(), $name);
-        event(new NewUserHasBeenCreated($user));
+        event(new UserHasBeenCreated($user));
         return $user;
     }
 

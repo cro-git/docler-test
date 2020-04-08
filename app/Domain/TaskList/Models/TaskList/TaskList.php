@@ -3,9 +3,13 @@
 
 namespace App\Domain\TaskList\Models\TaskList;
 
+use App\Domain\TaskList\Event\TaskList\TaskListHasBeenCreated;
+use App\Domain\TaskList\Event\TaskList\TaskListHasBeenUpdated;
 use App\Domain\TaskList\Models\Task\Task;
 use App\Domain\TaskList\Models\Task\TaskStatus;
 use App\Domain\TaskList\Models\User\UserId;
+use App\Domain\TaskList\Repository\TaskListRepositoryInterface;
+use App\Domain\TaskList\Repository\TaskRepositoryInterface;
 use ArrayIterator;
 
 class TaskList
@@ -16,33 +20,32 @@ class TaskList
     /** @var UserId */
     private $userId;
 
-    /** @var Task[] */
-    private $tasks;
+    /** @var TaskListName  */
+    private $name;
 
     /**
      * TaskList constructor.
      * @param TaskListId $id
      * @param UserId $userId
      * @param TaskListName $name
-     * @param ArrayIterator $tasks
      */
-    public function __construct(TaskListId $id, UserId $userId,TaskListName $name,ArrayIterator $tasks)
+    public function __construct(TaskListId $id, UserId $userId,TaskListName $name)
     {
         $this->id = $id;
         $this->userId = $userId;
         $this->name = $name;
-        $this->tasks = $tasks;
     }
 
     /**
-     * Add a new task to the Task List
-     * @param Task $task
-     * @return $this
+     * @param UserId $userId
+     * @param TaskListName $name
+     * @return TaskList
      */
-    public function addTask(Task $task)
+    public static function create(UserId $userId,TaskListName $name)
     {
-        $this->tasks->append($task);
-        return $this;
+        $taskList = new TaskList(TaskListId::generate(), $userId, $name);
+        event(new TaskListHasBeenCreated($taskList));
+        return $taskList;
     }
 
     /**
@@ -69,13 +72,20 @@ class TaskList
         return $this->name;
     }
 
+    public function getTasks()
+    {
+        /** @var TaskRepositoryInterface $repository */
+        $repository = resolve(TaskRepositoryInterface::class);
+        return $repository->getTaskOfList($this->id);
+    }
+
     /**
      * Check if there is task in the Task List
      * @return bool
      */
     public function hasTask()
     {
-        return $this->tasks->count() > 0;
+        return $this->getTasks()->count() > 0;
     }
 
     /**
@@ -84,7 +94,7 @@ class TaskList
      */
     public function hasTaskToDo()
     {
-        foreach ($this->tasks as $task)
+        foreach ($this->getTasks() as $task)
             if (!$task->isDone())
                 return true;
         return false;
@@ -102,7 +112,7 @@ class TaskList
         $tasks = new ArrayIterator();
 
         /** @var Task $task */
-        foreach ($this->tasks as $task)
+        foreach ($this->getTasks() as $task)
             if ($task->isDueToday()) {
                 if ($status === null || $task->getStatus()->equals($status))
                     $tasks->append($task);

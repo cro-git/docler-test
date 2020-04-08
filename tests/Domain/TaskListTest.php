@@ -6,14 +6,11 @@ namespace Tests\Domain;
 
 use App\Domain\TaskList\Models\Task\Task;
 use App\Domain\TaskList\Models\Task\TaskDescription;
-use App\Domain\TaskList\Models\Task\TaskDueDate;
-use App\Domain\TaskList\Models\Task\TaskId;
 use App\Domain\TaskList\Models\Task\TaskStatus;
 use App\Domain\TaskList\Models\TaskList\TaskList;
 use App\Domain\TaskList\Models\TaskList\TaskListId;
 use App\Domain\TaskList\Models\TaskList\TaskListName;
 use App\Domain\TaskList\Models\User\User;
-use App\Domain\TaskList\Models\User\UserId;
 use App\Domain\TaskList\Models\User\UserName;
 use ArrayIterator;
 use DateInterval;
@@ -27,11 +24,11 @@ class TaskListTest extends TestCase
      */
     public function testTaskList()
     {
-        $u1 = $this->createUser(new UserName('Mario','Rossi'));
+        $u1 = User::create(new UserName('Mario','Rossi'));
 
-        $l1 = new TaskList(TaskListId::generate(), $u1->getId(), new TaskListName('Home Works'), new ArrayIterator());
-        $l2 = new TaskList(TaskListId::generate(), $u1->getId(), new TaskListName('Morning Works'), new ArrayIterator());
-        $l3 = new TaskList(TaskListId::fromString($l1->getId()->getValue()), $u1->getId(), new TaskListName('Download List'), new ArrayIterator());
+        $l1 = new TaskList(TaskListId::generate(), $u1->getId(), new TaskListName('Home Works'));
+        $l2 = new TaskList(TaskListId::generate(), $u1->getId(), new TaskListName('Morning Works'));
+        $l3 = new TaskList(TaskListId::fromString($l1->getId()->getValue()), $u1->getId(), new TaskListName('Download List'));
 
         // Check the equals operator
         $this->assertFalse($l1->equals($l2));
@@ -48,9 +45,9 @@ class TaskListTest extends TestCase
         $this->assertFalse($l2->hasTaskToDo());
 
         // It's time to add some tasks and check if everything works
-        $l1->addTask($this->createTask('Task 1',TaskStatus::TODO));
-        $l1->addTask($this->createTask('Task 2',TaskStatus::TODO));
-        $l1->addTask($this->createTask('Task 3',TaskStatus::DONE));
+        Task::create(new TaskDescription('Task 1'),$l1->getId(),null,new TaskStatus(TaskStatus::TODO));
+        Task::create(new TaskDescription('Task 2'),$l1->getId(),null,new TaskStatus(TaskStatus::TODO));
+        Task::create(new TaskDescription('Task 3'),$l1->getId(),null,new TaskStatus(TaskStatus::DONE));
 
         // Check again, it should not be empty
         $this->assertTrue($l1->hasTask());
@@ -59,7 +56,8 @@ class TaskListTest extends TestCase
         $this->assertFalse($l2->hasTaskToDo());
 
         // Ok, we need to check if the TaskToDo only check for the right kind of task
-        $l2->addTask($this->createTask('Task 4',TaskStatus::DONE));
+        Task::create(new TaskDescription('Task 4'),$l2->getId(),new TaskStatus(TaskStatus::DONE));
+
         $this->assertTrue($l2->hasTask());
         $this->assertFalse($l2->hasTaskToDo());
 
@@ -80,36 +78,9 @@ class TaskListTest extends TestCase
 
         // We need to check if it really filters only 'today' task
         $tomorrow = (new DateTime())->add(new DateInterval('P1D'));
-        $l2->addTask($this->createTask('Task 5',TaskStatus::DONE,$tomorrow));
-        $l2->addTask($this->createTask('Task 5',TaskStatus::TODO,$tomorrow));
+        Task::create(new TaskDescription('Task 5'),$l2->getId(),$tomorrow,new TaskStatus(TaskStatus::DONE));
+        Task::create(new TaskDescription('Task 6'),$l2->getId(),$tomorrow,new TaskStatus(TaskStatus::TODO));
+
         $this->assertEquals(1,$l2->getTodayTasks()->count());
     }
-
-    /**
-     * @param UserName $name
-     * @return User
-     */
-    private function createUser(UserName $name)
-    {
-        return new User(
-            UserId::generate(),
-            $name
-        );
-    }
-
-    private function createTask(string $name, int $status,$date = null)
-    {
-        if ($date === null)
-            $date = new DateTime();
-
-        $task = new Task(
-            TaskId::generate(),
-            new TaskDescription($name),
-            new TaskStatus($status),
-            new TaskDueDate($date)
-        );
-        return $task;
-    }
-
-
 }

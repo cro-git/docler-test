@@ -3,7 +3,7 @@
 
 namespace Tests\Domain;
 
-use App\Domain\TaskList\Event\User\NewUserHasBeenCreated;
+use App\Domain\TaskList\Event\User\UserHasBeenCreated;
 use App\Domain\TaskList\Event\User\UserHasBeenDeleted;
 use App\Domain\TaskList\Event\User\UserHasBeenUpdated;
 use App\Domain\TaskList\Models\User\User;
@@ -77,17 +77,17 @@ class UserTest extends TestCase
         // We lister for the possible dispatched event, so we can be sure that the User is dispatching event correctly
         Event::fake([
             UserHasBeenDeleted::class,
-            NewUserHasBeenCreated::class,
+            UserHasBeenCreated::class,
             UserHasBeenUpdated::class
         ]);
 
         $u1 = User::create(new UserName('Mario','Rossi'));
-        Event::assertDispatched(NewUserHasBeenCreated::class,function ($event) use ($u1) {
+        Event::assertDispatched(UserHasBeenCreated::class,function ($event) use ($u1) {
             return $u1->equals($event->user);
         });
 
         $u2 = User::create(new UserName('Mario','Rossi'));
-        Event::assertDispatched(NewUserHasBeenCreated::class,function ($event) use ($u2) {
+        Event::assertDispatched(UserHasBeenCreated::class,function ($event) use ($u2) {
             return $u2->equals($event->user);
         });
 
@@ -95,7 +95,7 @@ class UserTest extends TestCase
 
         new User($u1->getId(),$u1->getName());
         new User(UserId::generate(),new UserName('Paolo','Draghi'));
-        Event::assertDispatched(NewUserHasBeenCreated::class,2); // We didn't create the User, so we should have 2 event ( for the 2 previus creation )
+        Event::assertDispatched(UserHasBeenCreated::class,2); // We didn't create the User, so we should have 2 event ( for the 2 previus creation )
 
         // No previous "hasBeenUpdated" event fired
         Event::assertNotDispatched(UserHasBeenUpdated::class);

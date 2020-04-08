@@ -6,7 +6,7 @@ namespace App\Domain\TaskList\Event\User;
 use App\Domain\TaskList\Models\User\User;
 use Illuminate\Queue\SerializesModels;
 
-class UserEvent
+abstract class UserEvent
 {
      use SerializesModels;
 

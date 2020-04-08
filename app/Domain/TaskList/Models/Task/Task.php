@@ -3,10 +3,18 @@
 
 namespace App\Domain\TaskList\Models\Task;
 
+use App\Domain\TaskList\Event\Task\TaskHasBeenCreated;
+use App\Domain\TaskList\Event\Task\TaskHasBeenUpdated;
+use App\Domain\TaskList\Models\TaskList\TaskListId;
+use DateTime;
+
 class Task
 {
     /** @var TaskId */
     private $id;
+
+    /** @var TaskListId */
+    private $taskListId;
 
     /** @var TaskDescription */
     private $description;
@@ -24,28 +32,32 @@ class Task
      * @param TaskDescription $description
      * @param TaskStatus $status
      * @param TaskDueDate $date
+     * @param TaskListId $taskListId
      */
-    public function __construct(TaskId $id, TaskDescription $description,TaskStatus $status,TaskDueDate $date)
+    public function __construct(TaskId $id, TaskDescription $description,TaskStatus $status,TaskDueDate $date,TaskListId $taskListId)
     {
         $this->id = $id;
         $this->description = $description;
         $this->status = $status;
         $this->date = $date;
+        $this->taskListId = $taskListId;
     }
 
     /**
      * @param TaskDescription $description
+     * @param TaskListId $taskListId
      * @param TaskDueDate $date
+     * @param TaskStatus $status
      * @return Task
      */
-    public static function create(TaskDescription $description,TaskDueDate $date)
+    public static function create(TaskDescription $description,TaskListId $taskListId,$date = null,$status = null)
     {
-        return new Task(
-            TaskId::generate(),
-            $description,
-            TaskStatus::create(TaskStatus::TODO),
-            $date
-        );
+        if (!$status) $status = TaskStatus::create(TaskStatus::TODO);
+        if (!$date) $date = new TaskDueDate(new DateTime());
+
+        $task = new Task(TaskId::generate(), $description, $status, $date, $taskListId);
+        event(new TaskHasBeenCreated($task));
+        return  $task;
     }
 
     /**
@@ -54,6 +66,7 @@ class Task
     public function setAsDone()
     {
         $this->status = TaskStatus::create(TaskStatus::DONE);
+        event(new TaskHasBeenUpdated($this));
         return $this;
     }
 
@@ -63,6 +76,7 @@ class Task
     public function setAsTodo()
     {
         $this->status = TaskStatus::create(TaskStatus::TODO);
+        event(new TaskHasBeenUpdated($this));
         return $this;
     }
 
@@ -73,6 +87,7 @@ class Task
     public function setDescription(TaskDescription $description)
     {
         $this->description = $description;
+        event(new TaskHasBeenUpdated($this));
         return $this;
     }
 
@@ -83,6 +98,7 @@ class Task
     public function changeDate(TaskDueDate $date)
     {
         $this->date = $date;
+        event(new TaskHasBeenUpdated($this));
         return $this;
     }
 
