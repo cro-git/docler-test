@@ -4,6 +4,8 @@
 namespace App\Domain\Task;
 
 
-class TaskDueDate extends \DateTime
+use App\Domain\Base\DateType;
+
+class TaskDueDate extends DateType
 {
 }

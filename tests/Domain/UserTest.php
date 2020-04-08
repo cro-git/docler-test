@@ -28,10 +28,14 @@ class UserTest extends TestCase
         $this->assertTrue($n1->equals($n4));
 
         // Check the get name / surname
-        $this->assertEquals('Mario',$n1->getFullName());
-        $this->assertEquals('Paolo',$n3->getFullName());
+        $this->assertEquals('Mario',$n1->getName());
+        $this->assertEquals('Paolo',$n3->getName());
         $this->assertEquals('Rossi',$n1->getSurname());
         $this->assertEquals('Draghi',$n2->getSurname());
+
+        // Check the full name
+        $this->assertEquals('Mario Rossi',$n1->getFullName());
+        $this->assertEquals('Mario Draghi',$n2->getFullName());
 
         // Check the to-string conversion
         $this->assertEquals('Mario Rossi',(string)$n1);

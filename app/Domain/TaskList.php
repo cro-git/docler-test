@@ -52,7 +52,7 @@ class TaskList
         /** @var Task $task */
         foreach ($this->tasks as $task)
             if ($task->isDueToday()) {
-                if ($status === null || $task->getStatus()->equals($status))
+                if ($status === null || $task->isDone())
                     $tasks->append($task);
             }
         return $tasks;

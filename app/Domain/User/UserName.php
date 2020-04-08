@@ -31,7 +31,7 @@ class UserName
      */
     public function __toString()
     {
-        return $this->name.' '.$this->surname;
+        return $this->getFullName();
     }
 
     /**
@@ -40,7 +40,7 @@ class UserName
      */
     public function equals(UserName $name)
     {
-        return ($this->name === $name->getFullName()
+        return ($this->name === $name->getName()
             && $this->surname === $name->getSurname());
     }
 
@@ -49,7 +49,12 @@ class UserName
      */
     public function getFullName()
     {
-        return (string)$this->name;
+        return $this->name.' '.$this->surname;
+    }
+
+    public function getName()
+    {
+        return $this->name;
     }
 
     /**
@@ -57,6 +62,6 @@ class UserName
      */
     public function getSurname()
     {
-        return (string)$this->surname;
+        return $this->surname;
     }
 }

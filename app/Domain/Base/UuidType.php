@@ -4,7 +4,7 @@
 namespace App\Domain\Base;
 
 
-use Assert\Assertion;
+use Assert\Assert;
 use Webpatser\Uuid\Uuid;
 
 abstract class UuidType
@@ -19,8 +19,8 @@ abstract class UuidType
      */
     public function __construct($value)
     {
-        Assertion::string($value);
-        Assertion::true(self::isValid($value), 'Invalid '.$this->getType().'Id');
+        Assert::that($value)->string();
+        Assert::that(self::isValid($value))->true('Invalid '.$this->getType().'Id');
 
         $this->value = $value;
     }

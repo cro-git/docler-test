@@ -3,7 +3,7 @@
 
 /**
  * A helper file for Laravel 5, to provide autocomplete information to your IDE
- * Generated for Laravel 7.1.1 on 2020-03-14 17:32:27.
+ * Generated for Laravel 7.1.1 on 2020-04-08 06:36:06.
  *
  * This file should not be included in your code, only analyzed by your IDE!
  *
@@ -3640,6 +3640,35 @@ namespace Illuminate\Support\Facades {
         }
         
         /**
+         * Get a lock instance.
+         *
+         * @param string $name
+         * @param int $seconds
+         * @param string|null $owner
+         * @return \Illuminate\Contracts\Cache\Lock 
+         * @static 
+         */ 
+        public static function lock($name, $seconds = 0, $owner = null)
+        {
+                        /** @var \Illuminate\Cache\MemcachedStore $instance */
+                        return $instance->lock($name, $seconds, $owner);
+        }
+        
+        /**
+         * Restore a lock instance using the owner identifier.
+         *
+         * @param string $name
+         * @param string $owner
+         * @return \Illuminate\Contracts\Cache\Lock 
+         * @static 
+         */ 
+        public static function restoreLock($name, $owner)
+        {
+                        /** @var \Illuminate\Cache\MemcachedStore $instance */
+                        return $instance->restoreLock($name, $owner);
+        }
+        
+        /**
          * Remove all items from the cache.
          *
          * @return bool 
@@ -3647,32 +3676,20 @@ namespace Illuminate\Support\Facades {
          */ 
         public static function flush()
         {
-                        /** @var \Illuminate\Cache\FileStore $instance */
+                        /** @var \Illuminate\Cache\MemcachedStore $instance */
                         return $instance->flush();
         }
         
         /**
-         * Get the Filesystem instance.
+         * Get the underlying Memcached connection.
          *
-         * @return \Illuminate\Filesystem\Filesystem 
+         * @return \Memcached 
          * @static 
          */ 
-        public static function getFilesystem()
+        public static function getMemcached()
         {
-                        /** @var \Illuminate\Cache\FileStore $instance */
-                        return $instance->getFilesystem();
-        }
-        
-        /**
-         * Get the working directory of the cache.
-         *
-         * @return string 
-         * @static 
-         */ 
-        public static function getDirectory()
-        {
-                        /** @var \Illuminate\Cache\FileStore $instance */
-                        return $instance->getDirectory();
+                        /** @var \Illuminate\Cache\MemcachedStore $instance */
+                        return $instance->getMemcached();
         }
         
         /**
@@ -3683,8 +3700,21 @@ namespace Illuminate\Support\Facades {
          */ 
         public static function getPrefix()
         {
-                        /** @var \Illuminate\Cache\FileStore $instance */
+                        /** @var \Illuminate\Cache\MemcachedStore $instance */
                         return $instance->getPrefix();
+        }
+        
+        /**
+         * Set the cache key prefix.
+         *
+         * @param string $prefix
+         * @return void 
+         * @static 
+         */ 
+        public static function setPrefix($prefix)
+        {
+                        /** @var \Illuminate\Cache\MemcachedStore $instance */
+                        $instance->setPrefix($prefix);
         }
          
     }
@@ -15424,6 +15454,27 @@ namespace Facade\Ignition\Facades {
  
 }
 
+namespace Webpatser\Uuid { 
+
+    /**
+     * Class Uuid
+     *
+     * @package Webpatser\Uuid
+     * @property string $bytes
+     * @property string $hex
+     * @property string $node
+     * @property string $string
+     * @property string $time
+     * @property string $urn
+     * @property string $variant
+     * @property string $version
+     */ 
+    class Uuid {
+         
+    }
+ 
+}
+
 
 namespace  { 
 
@@ -18336,6 +18387,8 @@ namespace  {
     class Cacheable extends \Suitmedia\Cacheable\Facade {}
 
     class Flare extends \Facade\Ignition\Facades\Flare {}
+
+    class Uuid extends \Webpatser\Uuid\Uuid {}
  
 }
 

@@ -101,6 +101,14 @@ class Task
     }
 
     /**
+     * @return bool
+     */
+    public function isDone()
+    {
+        return $this->status->isDone();
+    }
+
+    /**
      * @return TaskStatus
      */
     public function getStatus()

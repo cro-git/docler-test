@@ -17,9 +17,18 @@ class StringType
      */
     public function __construct($value)
     {
-        Assert::string($value);
+        Assert::that($value)->string();
         $this->value = $value;
     }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string)$this->value;
+    }
+
 
     public function equals(self $string)
     {

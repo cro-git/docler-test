@@ -5,7 +5,6 @@ namespace App\Domain\Task;
 
 
 use Assert\Assert;
-use Assert\Assertion;
 
 class TaskStatus
 {
@@ -26,8 +25,8 @@ class TaskStatus
      */
     public function __construct(int $status)
     {
-        Assert::integer($status);
-        Assertion::true(in_array($status,self::AVAILABLE_STATUS), 'Invalid status');
+        Assert::that($status)->integer();
+        Assert::that(in_array($status,self::AVAILABLE_STATUS))->true('Invalid status');
         $this->status = $status;
     }
 
@@ -46,5 +45,9 @@ class TaskStatus
         return $this->status;
     }
 
+    public function isDone()
+    {
+        return $this->status === self::DONE;
+    }
 
 }
