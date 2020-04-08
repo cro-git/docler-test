@@ -7,6 +7,7 @@ namespace Tests\Domain;
 use App\Domain\Base\UuidType;
 use App\Domain\Task;
 use App\Domain\Task\TaskDescription;
+use App\Domain\Task\TaskDueDate;
 use App\Domain\Task\TaskId;
 use App\Domain\Task\TaskStatus;
 use DateInterval;
@@ -44,19 +45,19 @@ class TaskTest extends TestCase
             TaskId::generate(),
             new TaskDescription('test'),
             TaskStatus::create(TaskStatus::TODO),
-            new Task\TaskDueDate(new DateTime())
+            new TaskDueDate(new DateTime())
         );
         $t2 = new Task(
             TaskId::generate(),
             new TaskDescription('test2'),
             TaskStatus::create(TaskStatus::TODO),
-            new Task\TaskDueDate(new DateTime())
+            new TaskDueDate(new DateTime())
         );
         $t3 = new Task(
             TaskId::fromString($t1->getId()->getValue()),
             new TaskDescription('test3'),
             TaskStatus::create(TaskStatus::DONE),
-            new Task\TaskDueDate((new DateTime())->add(new DateInterval('P1D')))
+            new TaskDueDate((new DateTime())->add(new DateInterval('P1D')))
         );
 
         // Check if the task store the id correctly
