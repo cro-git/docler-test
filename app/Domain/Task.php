@@ -109,6 +109,14 @@ class Task
     }
 
     /**
+     * @return TaskId
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
      * @return TaskStatus
      */
     public function getStatus()
@@ -122,5 +130,10 @@ class Task
     public function getDescription()
     {
         return $this->description;
+    }
+
+    public function equals(Task $task)
+    {
+        return $this->getId()->equals($task->getId());
     }
 }

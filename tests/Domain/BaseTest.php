@@ -5,7 +5,6 @@ namespace Tests\Domain;
 
 use App\Domain\Base\DateType;
 use App\Domain\Base\StringType;
-use App\Domain\Task\TaskDescription;
 use DateTime;
 use Tests\Domain\AbastractTestClasses\AbstractUuid;
 use Tests\TestCase;

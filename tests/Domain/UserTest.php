@@ -3,8 +3,6 @@
 
 namespace Tests\Domain;
 
-
-use App\Country;
 use App\Domain\User;
 use App\Domain\User\UserName;
 use Tests\TestCase;
