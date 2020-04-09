@@ -10,10 +10,13 @@ use App\Domain\TaskList\Models\User\User;
 use App\Domain\TaskList\Models\User\UserId;
 use App\Domain\TaskList\Models\User\UserName;
 use Event;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 
 class UserTest extends TestCase
 {
+    use DatabaseTransactions;
+
     /**
      * Testing the domain class UserName
      */
@@ -81,6 +84,12 @@ class UserTest extends TestCase
         });
 
         Event::assertNotDispatched(UserHasBeenDeleted::class);
+
+        $u1->delete();
+        Event::assertDispatched(UserHasBeenDeleted::class,function ($event) use ($u1)
+        {
+            return $u1->equals($event->user);
+        });
     }
 
     /**

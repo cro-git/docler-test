@@ -59,7 +59,7 @@ class TaskRepository implements TaskRepositoryInterface
      */
     public function getTaskOfList(TaskListId $taskListId)
     {
-        $tasks = Task::where('task_list_id',(string)$taskListId);
+        $tasks = Task::where('task_list_id',(string)$taskListId)->get();
         $list = new ArrayIterator();
         foreach ($tasks as $task)
             $list->append($this->mutator->createDomain($task));

@@ -11,6 +11,7 @@ use App\Domain\TaskList\Models\Task\TaskDueDate;
 use App\Domain\TaskList\Models\Task\TaskId;
 use App\Domain\TaskList\Models\Task\TaskStatus;
 use App\Domain\TaskList\Models\TaskList\TaskListId;
+use DateTime;
 
 
 class TaskMutator implements BaseMutator
@@ -22,7 +23,7 @@ class TaskMutator implements BaseMutator
     public function createEntity(Domain $domain)
     {
         $entity = new Entity();
-        $entity->id = $domain->getId();
+        $entity->id = (string)$domain->getId();
         $entity->description = $domain->getDescription()->getValue();
         $entity->due_date = $domain->getDueDate()->getValue();
         $entity->status = $domain->getStatus()->getValue();
@@ -47,7 +48,7 @@ class TaskMutator implements BaseMutator
             TaskId::fromString($entity->id),
             new TaskDescription($entity->description),
             new TaskStatus($entity->status),
-            new TaskDueDate($entity->due_date),
+            new TaskDueDate(new DateTime($entity->due_date)),
             new TaskListId($entity->task_list_id)
         );
     }

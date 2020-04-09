@@ -13,10 +13,13 @@ use App\Domain\TaskList\Models\Task\TaskStatus;
 use App\Domain\TaskList\Models\TaskList\TaskListId;
 use DateInterval;
 use DateTime;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 
 class TaskTest extends TestCase
 {
+    use DatabaseTransactions;
+
     /**
      * Testing the domain class TaskStatus
      */
