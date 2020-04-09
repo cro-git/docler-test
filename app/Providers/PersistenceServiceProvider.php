@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\DbPersistence\Repository\TaskListRepository;
+use App\DbPersistence\Repository\TaskRepository;
 use App\DbPersistence\Repository\UsersRepository;
 use App\Domain\TaskList\Repository\TaskListRepositoryInterface;
 use App\Domain\TaskList\Repository\TaskRepositoryInterface;

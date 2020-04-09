@@ -4,6 +4,7 @@
 namespace App\Domain\TaskList\Models\Task;
 
 use App\Domain\TaskList\Event\Task\TaskHasBeenCreated;
+use App\Domain\TaskList\Event\Task\TaskHasBeenDeleted;
 use App\Domain\TaskList\Event\Task\TaskHasBeenUpdated;
 use App\Domain\TaskList\Models\TaskList\TaskListId;
 use DateTime;
@@ -58,6 +59,12 @@ class Task
         $task = new Task(TaskId::generate(), $description, $status, $date, $taskListId);
         event(new TaskHasBeenCreated($task));
         return  $task;
+    }
+
+    public function delete()
+    {
+        event(new TaskHasBeenDeleted($this));
+        return true;
     }
 
     /**

@@ -2,9 +2,10 @@
 
 namespace App\DbPersistence\Repository;
 
+use App\DbPersistence\Models\Task;
 use App\DbPersistence\Mutator\TaskListMutator;
 use App\DbPersistence\Mutator\TaskMutator;
-use App\Domain\TaskList\Models\Task\Task;
+use App\Domain\TaskList\Models\Task\Task as DomainTask;
 use App\Domain\TaskList\Models\Task\TaskId;
 use App\Domain\TaskList\Models\TaskList\TaskListId;
 use App\Domain\TaskList\Repository\TaskRepositoryInterface;
@@ -34,7 +35,7 @@ class TaskRepository implements TaskRepositoryInterface
         return $this->mutator->createDomain($entity);
     }
 
-    public function saveTask(Task $task)
+    public function saveTask(DomainTask $task)
     {
         $entity = $this->mutator->createEntity($task);
         $entity->save();
@@ -46,7 +47,7 @@ class TaskRepository implements TaskRepositoryInterface
         $entity->delete();
     }
 
-    public function updateTask(Task $task)
+    public function updateTask(DomainTask $task)
     {
         $entity = Task::findOrFail((string)$task->getId());
         $this->mutator->updateEntity($entity,$task);

@@ -21,7 +21,7 @@ class TaskListPersistenceTest extends TestCase
 
         $u1 = User::create(new UserName('Mario','Rossi'));
 //
-        // We create an user and we expect the db to have this user
+        // We create a task list and we expect the db to have this record
         $t1 = TaskList::create($u1->getId(),new TaskListName('Work'));
         $this->assertDatabaseHas('tl_task_lists', ['id'=> (string)$t1->getId(), 'name' => 'Work','user_id' => (string)$u1->getId()]);
 

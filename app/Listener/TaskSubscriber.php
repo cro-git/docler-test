@@ -2,29 +2,36 @@
 
 namespace App\Listener;
 
-use App\DbPersistence\Models\Task;
+use App\DbPersistence\Repository\TaskRepository;
 use App\Domain\TaskList\Event\Task\TaskHasBeenCreated;
-
 use App\Domain\TaskList\Event\Task\TaskHasBeenDeleted;
 use App\Domain\TaskList\Event\Task\TaskHasBeenUpdated;
-use App\Domain\TaskList\Event\User\UserHasBeenUpdated;
+use App\Domain\TaskList\Repository\TaskRepositoryInterface;
 use Illuminate\Events\Dispatcher;
 
 class TaskSubscriber
 {
-    public function taskHasBeenCreated(TaskHasBeenCreated $event)
+    /**
+     * @return TaskRepository|mixed
+     */
+    private function getRepository()
     {
-        Task::createFromModel($event->task);
+        return resolve(TaskRepositoryInterface::class);
     }
 
-    public function taskHasBeenDeleted(TaskHasBeenCreated $event)
+    public function taskHasBeenCreated(TaskHasBeenCreated $event)
     {
+        $this->getRepository()->saveTask($event->task);
+    }
 
+    public function taskHasBeenDeleted(TaskHasBeenDeleted $event)
+    {
+        $this->getRepository()->deleteTask($event->task->getId());
     }
 
     public function taskHasBeenUpdated(TaskHasBeenUpdated $event)
     {
-
+        $this->getRepository()->updateTask($event->task);
     }
 
 
@@ -37,17 +44,17 @@ class TaskSubscriber
     {
         $events->listen(
             TaskHasBeenCreated::class,
-            'App\Listeners\TaskSubscriber@taskHasBeenCreated'
+            'App\Listener\TaskSubscriber@taskHasBeenCreated'
         );
 
         $events->listen(
             TaskHasBeenDeleted::class,
-            'App\Listeners\TaskSubscriber@taskHasBeenDeleted'
+            'App\Listener\TaskSubscriber@taskHasBeenDeleted'
         );
 
         $events->listen(
             TaskHasBeenUpdated::class,
-            'App\Listeners\TaskSubscriber@taskHasBeenUpdated'
+            'App\Listener\TaskSubscriber@taskHasBeenUpdated'
         );
     }
 }
