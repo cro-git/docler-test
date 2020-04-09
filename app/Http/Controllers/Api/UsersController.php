@@ -3,68 +3,54 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\DbPersistence\Repository\UsersRepository;
+use App\Domain\TaskList\Models\User\User;
+use App\Domain\TaskList\Models\User\UserName;
+use App\Domain\TaskList\Serializer\UserSerializer;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\UpdateUserDetail;
-use App\Repositories\CountryRepository;
-use App\Repositories\UserRepository;
-use App\User;
-use Cacheable;
+use App\Http\Requests\CreateUserRequest;
+use App\Http\Requests\UpdateUserReqeust;
 
 class UsersController extends Controller
 {
-    /**
-     * @var UserRepository
-     */
-    private $userRepository;
 
     /**
-     * @var CountryRepository
+     * @var UsersRepository
      */
-    private $countryRepository;
+    private $usersRepository;
 
-
-    public function __construct(UserRepository $userRepository,CountryRepository $countryRepository)
+    public function __construct(UsersRepository $usersRepository)
     {
-        $this->userRepository = Cacheable::wrap($userRepository);
-        $this->countryRepository = Cacheable::wrap($countryRepository);
+        $this->usersRepository = $usersRepository;
     }
 
-    public function index()
+    public function listUsers()
     {
-        return $this->userRepository->active();
+        $users = $this->usersRepository->getAllUsers();
+        return response()->json(UserSerializer::jsonList($users));
     }
 
-    public function listByCitizenship($countryIso2)
-    {
-        $country = $this->countryRepository->findByIso2($countryIso2);
-        if (!$country)
-            return response()->json(['message' =>__('Country not found')], 404);
-
-        return $this->userRepository->citizendOf($country->id);
-    }
-
-    public function updateUserWithDetail(User $user,UpdateUserDetail $request)
+    public function createUser(CreateUserRequest $request)
     {
         $data = $request->validated();
-        if (!$user->detail)
-            return response()->json(['message' => __('Only users with detail can be updated')],403);
 
-        // We're expecting an iso2 code for the country, but the model needs and id, so we fetch the record and get the corresponding id
-        // The country exists, it has been checked in the UpdateUserDetail request, so no need to check twice
-        if (isset($data['citizenship']))
-            $data['citizenship_country_id'] = $this->countryRepository->findByIso2($data['citizenship'])->id;
-
-        $user->update($data);
-        $user->detail->update($data);
-
-        return response()->json(['message' => __('User updated')],200);
+        $name = new UserName($data['name'],$data['surname']);
+        $user = User::create($name);
+        return response()->json(UserSerializer::json($user));
     }
 
-    public function deleteUserWithoutDetail(User $user)
+    public function getUserDetail($id)
     {
-        if ($user->detail)
-            return response()->json(['message' => __('You can delete only users without detail')], 403);
-        $user->delete();
-        return response()->json(['message' => __('User deleted')],200);
+        return response()->json([]);
+    }
+
+    public function updateUser($id,UpdateUserReqeust $reqeust)
+    {
+
+    }
+
+    public function deleteUser($id)
+    {
+
     }
 }

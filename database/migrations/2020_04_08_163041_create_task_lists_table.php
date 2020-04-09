@@ -13,12 +13,12 @@ class CreateTaskListsTable extends Migration
      */
     public function up()
     {
-        Schema::create('task_lists', function (Blueprint $table) {
+        Schema::create('tl_task_lists', function (Blueprint $table) {
             $table->uuid('id')->primary();
 
             // Foreign key.
             $table->uuid('user_id');
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('user_id')->references('id')->on('tl_users');
 
             $table->char('name',255);
 
@@ -33,6 +33,6 @@ class CreateTaskListsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('task_lists');
+        Schema::dropIfExists('tl_task_lists');
     }
 }

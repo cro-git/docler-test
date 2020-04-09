@@ -45,33 +45,6 @@ class UserTest extends TestCase
         $this->assertEquals('Mario Draghi',(string)$n2);
     }
 
-    /**
-     * Testing the domain class User
-     */
-    public function testUser()
-    {
-        $u1 = User::create(new UserName('Mario','Rossi'));
-        $u2 = User::create(new UserName('Mario','Rossi'));
-
-        $u3 = new User($u1->getId(),$u1->getName());
-        $u4 = new User($u1->getId(),new UserName('Paolo','Draghi'));
-
-        // Check if the name is assigned correctly to the user
-        $this->assertEquals('Mario Rossi',$u1->getName()->getFullName());
-
-        // Check if equals works as expected
-        $this->assertFalse($u1->equals($u2));
-        $this->assertTrue($u1->equals($u3));
-        $this->assertTrue($u1->equals($u4));
-
-        // Check if the name change correctly when we change name
-        $u1->changeName(new UserName('Giovanni','Belvedere'));
-        $this->assertEquals('Giovanni Belvedere',$u1->getName()->getFullName());
-
-        // Check if the comparison works again even when we change name
-        $this->assertTrue($u1->equals($u3));
-    }
-
     public function testEvents()
     {
         // We lister for the possible dispatched event, so we can be sure that the User is dispatching event correctly
@@ -108,5 +81,34 @@ class UserTest extends TestCase
         });
 
         Event::assertNotDispatched(UserHasBeenDeleted::class);
+    }
+
+    /**
+     * Testing the domain class User
+     */
+    public function testUser()
+    {
+        $u1 = User::create(new UserName('Mario','Rossi'));
+        $u2 = User::create(new UserName('Mario','Rossi'));
+
+
+
+        $u3 = new User($u1->getId(),$u1->getName());
+        $u4 = new User($u1->getId(),new UserName('Paolo','Draghi'));
+
+        // Check if the name is assigned correctly to the user
+        $this->assertEquals('Mario Rossi',$u1->getName()->getFullName());
+
+        // Check if equals works as expected
+        $this->assertFalse($u1->equals($u2));
+        $this->assertTrue($u1->equals($u3));
+        $this->assertTrue($u1->equals($u4));
+
+        // Check if the name change correctly when we change name
+        $u1->changeName(new UserName('Giovanni','Belvedere'));
+        $this->assertEquals('Giovanni Belvedere',$u1->getName()->getFullName());
+
+        // Check if the comparison works again even when we change name
+        $this->assertTrue($u1->equals($u3));
     }
 }

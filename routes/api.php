@@ -13,10 +13,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('users','Api\UsersController@index');
-Route::post('users/{user}/detail','Api\UsersController@updateUserWithDetail')->name('users_update_with_detail');
-Route::get('users/citizenship/{countryIso2}','Api\UsersController@listByCitizenship')->name('users_by_cityzenship');
-Route::delete('users/{user}','Api\UsersController@deleteUserWithoutDetail')->name('users_delete_without_detail');
+Route::get('users','Api\UsersController@listUsers')->name('user__list');
+Route::post('users','Api\UsersController@createUser')->name('user__create');
+Route::get('users/{id}','Api\UsersController@getUserDetail')->name('user__detail');
+Route::put('users/{id}','Api\UsersController@updateUser')->name('user__update');
+Route::delete('users/{id}','Api\UsersController@deleteUser')->name('user__delete');
 
 Route::fallback(function(){
     return response()->json([

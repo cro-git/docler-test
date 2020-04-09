@@ -175,11 +175,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
-        /*
-         * App-Specific Service Providers..
-         */
-        \Suitmedia\Cacheable\ServiceProvider::class,
-
+        App\Providers\PersistenceServiceProvider::class,
     ],
 
     /*

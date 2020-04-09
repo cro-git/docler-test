@@ -3,6 +3,12 @@
 namespace App\DbPersistence\Models;
 use GoldSpecDigital\LaravelEloquentUUID\Database\Eloquent\Model;
 
+/**
+ * Class TaskList
+ * @package App\DbPersistence\Models
+ * @property string $id;
+ * @property string $name;
+ */
 class TaskList extends Model
 {
     /**
@@ -11,4 +17,5 @@ class TaskList extends Model
      * @var string
      */
     protected $table = 'tl_task_lists';
+
 }

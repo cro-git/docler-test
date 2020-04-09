@@ -13,12 +13,12 @@ class CreateTasksTable extends Migration
      */
     public function up()
     {
-        Schema::create('tasks', function (Blueprint $table) {
+        Schema::create('tl_tasks', function (Blueprint $table) {
             $table->uuid('id')->primary();
 
             // Foreign key.
             $table->uuid('task_list_id');
-            $table->foreign('task_list_id')->references('id')->on('task_lists');
+            $table->foreign('task_list_id')->references('id')->on('tl_task_lists');
 
             $table->text('description');
             $table->dateTime('due_date');
@@ -35,6 +35,6 @@ class CreateTasksTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tasks');
+        Schema::dropIfExists('tl_tasks');
     }
 }

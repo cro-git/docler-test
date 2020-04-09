@@ -111,6 +111,14 @@ class Task
     }
 
     /**
+     * @return TaskDueDate
+     */
+    public function getDueDate()
+    {
+        return $this->date;
+    }
+
+    /**
      * @return bool
      */
     public function isDone()
@@ -140,6 +148,14 @@ class Task
     public function getDescription()
     {
         return $this->description;
+    }
+
+    /**
+     * @return TaskListId
+     */
+    public function getTaskListId()
+    {
+        return $this->taskListId;
     }
 
     public function equals(Task $task)
