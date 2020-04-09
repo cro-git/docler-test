@@ -24,8 +24,8 @@ class UpdateUserReqeust extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'alpha',
-            'surname' => 'alpha',
+            'name' => 'required|alpha',
+            'surname' => 'required|alpha',
         ];
     }
 }
