@@ -26,7 +26,7 @@ class UsersRepository implements UsersRepositoryInterface
 
     public function getUser(UserId $userId)
     {
-        $entity = User::findOrFail($userId->getValue());
+        $entity = User::findOrFail((string)$userId);
         return $this->mutator->createDomain($entity);
     }
 
@@ -38,13 +38,13 @@ class UsersRepository implements UsersRepositoryInterface
 
     public function deleteUser(UserId $userId)
     {
-        $entity = User::where('id',$userId->getValue())->first();
+        $entity = User::findOrFail((string)$userId);
         $entity->delete();
     }
 
     public function updateUser(Domainuser $user)
     {
-        $entity = User::where('id',$user->getId()->getValue())->first();
+        $entity = User::findOrFail((string)$user->getId());
         $this->mutator->updateEntity($entity,$user);
         $entity->save();
     }
@@ -52,9 +52,9 @@ class UsersRepository implements UsersRepositoryInterface
     public function getAllUsers()
     {
         $users = User::all();
-        $domainUsers = new ArrayIterator();
+        $list = new ArrayIterator();
         foreach ($users as $user)
-            $domainUsers->append($this->mutator->createDomain($user));
-        return $domainUsers;
+            $list->append($this->mutator->createDomain($user));
+        return $list;
     }
 }

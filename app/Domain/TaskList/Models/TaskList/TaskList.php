@@ -4,6 +4,7 @@
 namespace App\Domain\TaskList\Models\TaskList;
 
 use App\Domain\TaskList\Event\TaskList\TaskListHasBeenCreated;
+use App\Domain\TaskList\Event\TaskList\TaskListHasBeenDeleted;
 use App\Domain\TaskList\Event\TaskList\TaskListHasBeenUpdated;
 use App\Domain\TaskList\Models\Task\Task;
 use App\Domain\TaskList\Models\Task\TaskStatus;
@@ -46,6 +47,28 @@ class TaskList
         $taskList = new TaskList(TaskListId::generate(), $userId, $name);
         event(new TaskListHasBeenCreated($taskList));
         return $taskList;
+    }
+
+    /**
+     * Change the name of this task list
+     * @param TaskListName $name
+     * @return $this
+     */
+    public function changeName(TaskListName $name)
+    {
+        $this->name = $name;
+        event(new TaskListHasBeenUpdated($this));
+        return $this;
+    }
+
+    /**
+     * Delete the task list
+     * @return bool
+     */
+    public function delete()
+    {
+        event(new TaskListHasBeenDeleted($this));
+        return true;
     }
 
     /**

@@ -4,7 +4,6 @@
 namespace App\DbPersistence\Mutator;
 
 
-use App\DbPersistence\Models\Task;
 use App\DbPersistence\Models\Task as Entity;
 use App\Domain\TaskList\Models\Task\Task as Domain;
 use App\Domain\TaskList\Models\Task\TaskDescription;

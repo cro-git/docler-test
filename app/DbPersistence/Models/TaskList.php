@@ -8,6 +8,7 @@ use GoldSpecDigital\LaravelEloquentUUID\Database\Eloquent\Model;
  * @package App\DbPersistence\Models
  * @property string $id;
  * @property string $name;
+ * @property string $user_id;
  */
 class TaskList extends Model
 {

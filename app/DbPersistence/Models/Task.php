@@ -11,7 +11,7 @@ use GoldSpecDigital\LaravelEloquentUUID\Database\Eloquent\Model;
  * @property string $description;
  * @property DateTime $due_date;
  * @property int $status;
- * @property int $task_list_id;
+ * @property string $task_list_id;
  */
 class Task extends Model
 {
