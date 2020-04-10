@@ -18,17 +18,17 @@ class TaskListTest extends TestCase
     public function testGetLists()
     {
         // Check with a wrong id
-        $response = $this->get('/api/taskList/user/wrong_id');
+        $response = $this->get(route('task_list.list',['user_id' => 'wrong']));
         $response->assertJson([],true)->assertStatus(404);
 
-        $response = $this->get('/api/taskList/user/'.UserId::generate());
+        $response = $this->get(route('task_list.list',['user_id' => (string)UserId::generate()]));
         $response->assertJson([],true)->assertStatus(404);
 
         // Let's create some meaningful data and check if it works
         $u1 = User::create(new UserName('Mario','Rossi'));
 
         // At the beginning, it's an empty list..
-        $response = $this->get('/api/taskList/user/'.$u1->getId());
+        $response = $this->get(route('task_list.list',['user_id' => (string)$u1->getId()]));
         $response->assertJson([],true)->assertStatus(200);
 
         $t1 = TaskList::create($u1->getId(),new TaskListName('List 1'));
@@ -37,14 +37,14 @@ class TaskListTest extends TestCase
         $u2 = User::create(new UserName('Gino','Pilotino'));
         $t3 = TaskList::create($u2->getId(),new TaskListName('List 3'));
 
-        $response = $this->get('/api/taskList/user/'.$u1->getId());
+        $response = $this->get(route('task_list.list',['user_id' => (string)$u1->getId()]));
         $response->assertJson([
             ['id' => $t1->getId()->getValue(),'name' => 'List 1'],
             ['id' => $t2->getId()->getValue(),'name' => 'List 2']
         ],true)->assertStatus(200);
         $response->assertJsonMissing([['id' => $t3->getId()]]);
 
-        $response = $this->get('/api/taskList/user/'.$u2->getId());
+        $response = $this->get(route('task_list.list',['user_id' => (string)$u2->getId()]));
         $response->assertJson([
             ['id' => $t3->getId()->getValue(),'name' => 'List 3'],
         ],true)->assertStatus(200);
@@ -55,28 +55,28 @@ class TaskListTest extends TestCase
     {
         // We need to check if the reply contains all the needed data, and if the record is correctly added to the db
         $ut = User::create(new UserName('Mario','Rossi'));
-        $response = $this->post('/api/taskList',['user_id' => (string)$ut->getId(),'name' => 'List1']);
+        $response = $this->post(route('task_list.create'),['user_id' => (string)$ut->getId(),'name' => 'List1']);
         $response->assertStatus(200)->assertJson(['name' => 'List1']);
         $this->assertDatabaseHas('tl_task_lists',['name' => 'List1','user_id' => (string)$ut->getId()]);
 
-        $response = $this->post('/api/taskList',['user_id' => (string)$ut->getId(),'name' => 'List2']);
+        $response = $this->post(route('task_list.create'),['user_id' => (string)$ut->getId(),'name' => 'List2']);
         $response->assertStatus(200)->assertJson(['name' => 'List2']);
         $this->assertDatabaseHas('tl_task_lists',['name' => 'List2','user_id' => (string)$ut->getId()]);
 
         // Need to check if the fields are really required
-        $response = $this->post('/api/taskList',['user_id' => 'wrong_id','name' => 'Mario']);
+        $response = $this->post(route('task_list.create'),['user_id' => 'wrong_id','name' => 'Mario']);
         $response->assertStatus(422)->assertJson(['errors' => ['user_id' => [],'user_id' => []]]);
 
-        $response = $this->post('/api/taskList',['user_id' => UserId::generate(),'name' => 'Mario']);
+        $response = $this->post(route('task_list.create'),['user_id' => UserId::generate(),'name' => 'Mario']);
         $response->assertStatus(422)->assertJson(['errors' => ['user_id' => [],'user_id' => []]]);
 
-        $response = $this->post('/api/taskList',['name' => 'Mario',]);
+        $response = $this->post(route('task_list.create'),['name' => 'Mario',]);
         $response->assertStatus(422)->assertJson(['errors' => ['user_id' => []]]);
 
-        $response = $this->post('/api/taskList',['user_id' => (string)$ut->getId(),]);
+        $response = $this->post(route('task_list.create'),['user_id' => (string)$ut->getId(),]);
         $response->assertStatus(422)->assertJson(['errors' => ['name' => []]]);
 
-        $response = $this->post('/api/taskList',[]);
+        $response = $this->post(route('task_list.create'),[]);
         $response->assertStatus(422)->assertJson(['errors' => ['user_id' => [],'name' => []]]);
     }
 
@@ -86,39 +86,39 @@ class TaskListTest extends TestCase
         $t1 = TaskList::create($u1->getId(),new TaskListName('List 1'));
         $t2 = TaskList::create($u1->getId(),new TaskListName('List 2'));
 
-        $response = $this->get('/api/taskList/'.$t1->getId());
+        $response = $this->get(route('task_list.detail',['id' => (string)$t1->getId()]));
         $response->assertStatus(200)->assertJson(['id' => (string)$t1->getId(),'name' => 'List 1']);
 
-        $response = $this->get('/api/taskList/'.$t2->getId());
+        $response = $this->get(route('task_list.detail',['id' => (string)$t2->getId()]));
         $response->assertStatus(200)->assertJson(['id' => (string)$t2->getId(),'name' => 'List 2']);
 
-        $response = $this->get('/api/taskList/'.TaskListId::generate());
+        $response = $this->get(route('task_list.detail',['id' => (string)TaskListId::generate()]));
         $response->assertStatus(404);
 
-        $response = $this->get('/api/taskList/wrong');
+        $response = $this->get(route('task_list.detail',['id' => 'wrong']));
         $response->assertStatus(404);
     }
 
     public function testChangeName()
     {
         // Check with some wrong id
-        $response = $this->put('/api/taskList/wrong',['name' => 'List']);
+        $response = $this->put(route('task_list.update',['id' => 'wrong']),['name' => 'List']);
         $response->assertStatus(404);
 
-        $response = $this->put('/api/taskList/'.TaskListId::generate(),['name' => 'List']);
+        $response = $this->put(route('task_list.update',['id' => (string)TaskListId::generate()]),['name' => 'List']);
         $response->assertStatus(404);
 
         $u1 = User::create(new UserName('Mario','Rossi'));
         $t1 = TaskList::create($u1->getId(),new TaskListName('List1'));
 
         // Check if it really change the value
-        $response = $this->put('/api/taskList/'.$t1->getId(),['name' => 'List 2']);
+        $response = $this->put(route('task_list.update',['id' => (string)$t1->getId()]),['name' => 'List 2']);
         $response->assertStatus(200)->assertJson(['id' => (string)$t1->getId(),'name' => 'List 2']);
         $this->assertDatabaseHas('tl_task_lists',['id'=> $t1->getId(),'name' => 'List 2']);
         $this->assertDatabaseMissing('tl_task_lists',['name' => 'List1']);
 
         // Check the mandatory fields
-        $response = $this->put('/api/taskList/'.$t1->getId(),[]);
+        $response = $this->put(route('task_list.update',['id' => (string)$t1->getId()]),[]);
         $response->assertStatus(422)->assertJson(['errors' => ['name' => []]]);
     }
 
@@ -129,19 +129,19 @@ class TaskListTest extends TestCase
 
         // We have the task before the delete, and then it disappers
         $this->assertDatabaseHas('tl_task_lists',['id'=> $t1->getId()]);
-        $response = $this->delete('/api/taskList/'.$t1->getId());
+        $response = $this->delete(route('task_list.delete',['id' => (string)$t1->getId()]));
         $response->assertStatus(200)->assertJson(['id' => (string)$t1->getId()]);
         $this->assertDatabaseMissing('tl_task_lists',['id'=> $t1->getId()]);
 
         // We cannot delete a record twice
-        $response = $this->delete('/api/taskList/'.$t1->getId());
+        $response = $this->delete(route('task_list.delete',['id' => (string)$t1->getId()]));
         $response->assertStatus(404);
 
         // And of course, we cannot delete a wrong id
-        $response = $this->delete('/api/taskList/wrong');
+        $response = $this->delete(route('task_list.delete',['id' => 'wrong']));
         $response->assertStatus(404);
 
-        $response = $this->delete('/api/taskList/'.TaskListId::generate());
+        $response = $this->delete(route('task_list.delete',['id' => (string)TaskListId::generate()]));
         $response->assertStatus(404);
     }
 }

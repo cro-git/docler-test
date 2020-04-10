@@ -19,6 +19,7 @@ class TaskSerializer extends BaseSerializer
 
     private function getStatusName($status)
     {
+        // Todo: this need to be in lang, and needs to be done inside the TaskStatus not here
         if ($status === TaskStatus::DONE)
             return 'Done';
         return 'Todo';

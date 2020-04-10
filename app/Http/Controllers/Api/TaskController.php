@@ -3,17 +3,21 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Domain\TaskList\Models\Task\Task;
+use App\Domain\TaskList\Models\Task\TaskDescription;
+use App\Domain\TaskList\Models\Task\TaskDueDate;
+use App\Domain\TaskList\Models\Task\TaskId;
+use App\Domain\TaskList\Models\Task\TaskStatus;
 use App\Domain\TaskList\Models\TaskList\TaskList;
 use App\Domain\TaskList\Models\TaskList\TaskListId;
 use App\Domain\TaskList\Models\TaskList\TaskListName;
-use App\Domain\TaskList\Models\User\UserId;
 use App\Domain\TaskList\Repository\TaskListRepositoryInterface;
 use App\Domain\TaskList\Repository\TaskRepositoryInterface;
 use App\Domain\TaskList\Serializer\TaskListSerializer;
 use App\Domain\TaskList\Serializer\TaskSerializer;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\ChangeNameToTaskListRequest;
-use App\Http\Requests\CreateTaskListRequest;
+use App\Http\Requests\CreateTaskRequest;
+use App\Http\Requests\UpdateTaskRequest;
 use Exception;
 
 class TaskController extends Controller
@@ -48,60 +52,107 @@ class TaskController extends Controller
             return response()->json(['error' => 'Not a valid TaskListID'],404);
         }
 
-
         /** @var TaskList $taskList */
         $taskList = $this->taskListRepository->getTaskList($taskListId);
-        return response()->json($this->serializer->jsonList($taskList->getTasks()));
+        $tasks = $taskList->getTasks();
+
+        return response()->json($this->serializer->jsonList($tasks));
     }
 
-    public function createTask(CreateTaskListRequest $request)
+    public function createTask(CreateTaskRequest $request)
     {
         $data = $request->validated();
         try {
-            $userId = UserId::fromString($data['user_id']);
-        }
-        catch (Exception $exception) {
-            return response()->json(['error' => 'Not a valid UserID'],404);
-        }
-
-        $name = new TaskListName($data['name']);
-        $taskList = TaskList::create($userId,$name);
-        return response()->json($this->serializer->json($taskList));
-    }
-
-    public function changeNameToTaskList($id,ChangeNameToTaskListRequest $request)
-    {
-        try {
-            $taskListId = TaskListId::fromString($id);
+            $taskListId = TaskListId::fromString($data['task_list_id']);
         }
         catch (Exception $exception) {
             return response()->json(['error' => 'Not a valid TaskListID'],404);
         }
 
-        /** @var TaskList $taskList */
-        $taskList = $this->taskListRepository->getTaskList($taskListId);
+        $description = new TaskDescription($data['description']);
+        $due_date = null;
+        if (isset($data['due_date']))
+            $due_date = TaskDueDate::createFromString($data['due_date'],'d-m-Y');
+        $status = null;
+        if (isset($data['status'])) {
+            try {
+                $status = new TaskStatus($data['status']);
+            }
+            catch (Exception $exception) {
+                return response()->json(['errors' => ['status' => ['Not a valid Status']]],422);
+            }
+        }
 
-        $data = $request->validated();
-        $name = new TaskListName($data['name']);
-        $taskList = $taskList->changeName($name);
-
-        return response()->json($this->serializer->json($taskList));
+        $task = Task::create($description,$taskListId,$due_date,$status);
+        return response()->json($this->serializer->json($task));
     }
 
-    public function deleteTaskList($id)
+    public function taskDetail($id)
     {
         try {
-            $taskListId = TaskListId::fromString($id);
+            $taskId = TaskId::fromString($id);
         }
         catch (Exception $exception) {
-            return response()->json(['error' => 'Not a valid TaskListID'],404);
+            return response()->json(['error' => 'Not a valid TaskID'],404);
         }
 
-        /** @var TaskList $taskList */
-        $taskList = $this->taskListRepository->getTaskList($taskListId);
+        /** @var Task $task */
+        $task = $this->taskRepository->getTask($taskId);
 
-        $taskList->delete();
+        return response()->json($this->serializer->json($task));
+    }
 
-        return response()->json($this->serializer->json($taskList));
+    public function updateTask($id,UpdateTaskRequest $request)
+    {
+        try {
+            $taskId = TaskId::fromString($id);
+        }
+        catch (Exception $exception) {
+            return response()->json(['error' => 'Not a valid TaskID'],404);
+        }
+
+        /** @var Task $task */
+        $task = $this->taskRepository->getTask($taskId);
+
+        $data = $request->validated();
+        if (isset($data['description']))
+            $task->setDescription(new TaskDescription($data['description']));
+
+        if (isset($data['due_date'])) {
+            $due_date = TaskDueDate::createFromString($data['due_date'], 'd-m-Y');
+            $task->changeDate($due_date);
+        }
+
+        if (isset($data['status'])) {
+            try {
+                $status = new TaskStatus($data['status']);
+            }
+            catch (Exception $exception) {
+                return response()->json(['errors' => ['status' => ['Not a valid Status']]],422);
+            }
+            if ($status->isDone())
+                $task->setAsDone();
+            else
+                $task->setAsTodo();
+        }
+
+        return response()->json($this->serializer->json($task));
+    }
+
+    public function deleteTask($id)
+    {
+        try {
+            $taskId = TaskId::fromString($id);
+        }
+        catch (Exception $exception) {
+            return response()->json(['error' => 'Not a valid TaskID'],404);
+        }
+
+        /** @var Task $task */
+        $task = $this->taskRepository->getTask($taskId);
+
+        $task->delete();
+
+        return response()->json($this->serializer->json($task));
     }
 }

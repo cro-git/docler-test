@@ -31,7 +31,7 @@ class TaskRepository implements TaskRepositoryInterface
      */
     public function getTask(TaskId $taskId)
     {
-        $entity = Task::findOrFail((string)TaskId);
+        $entity = Task::findOrFail((string)$taskId);
         return $this->mutator->createDomain($entity);
     }
 
