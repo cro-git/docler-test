@@ -78,6 +78,22 @@ class UserApiTest extends TestCase
         $response->assertStatus(404);
     }
 
+    public function testDetailUser()
+    {
+        $u1 = User::create(new UserName('Mario','Rossi'));
+        $u2 = User::create(new UserName('Gino','Pilotino'));
+
+        $response = $this->get('/api/users/'.$u1->getId()->getValue());
+        $response->assertStatus(200)->assertJson(['id' => (string)$u1->getId(),'name' => 'Mario','surname' => 'Rossi']);
+
+        $response = $this->get('/api/users/'.$u2->getId()->getValue());
+        $response->assertStatus(200)->assertJson(['id' => (string)$u2->getId(),'name' => 'Gino','surname' => 'Pilotino']);
+
+        // Valid UserID, but no record found
+        $response = $this->get('/api/users/'.UserId::generate());
+        $response->assertStatus(404);
+    }
+
     public function testDeleteUser()
     {
         $u1 = User::create(new UserName('Mario','Rossi'));

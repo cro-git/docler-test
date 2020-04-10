@@ -8,7 +8,6 @@ use App\Domain\Base\UuidType;
 use App\Domain\TaskList\Event\Task\TaskHasBeenCreated;
 use App\Domain\TaskList\Event\Task\TaskHasBeenDeleted;
 use App\Domain\TaskList\Event\Task\TaskHasBeenUpdated;
-use App\Domain\TaskList\Event\User\UserHasBeenDeleted;
 use App\Domain\TaskList\Models\Task\Task;
 use App\Domain\TaskList\Models\Task\TaskDescription;
 use App\Domain\TaskList\Models\Task\TaskDueDate;

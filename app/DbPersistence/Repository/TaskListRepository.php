@@ -51,9 +51,9 @@ class TaskListRepository implements TaskListRepositoryInterface
         $entity->save();
     }
 
-    public function getAllTaskListByUser(UserId $userId)
+    public function getTaskListsByUser(UserId $userId)
     {
-        $taskLists = TaskList::where('user_id',(string)$userId);
+        $taskLists = TaskList::where('user_id',(string)$userId)->get();
         $list = new ArrayIterator();
         foreach ($taskLists as $taskList)
             $list->append($this->mutator->createDomain($taskList));

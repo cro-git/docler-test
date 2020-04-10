@@ -24,8 +24,8 @@ class CreateUserRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|alpha',
-            'surname' => 'required|alpha',
+            'name' => 'required|string',
+            'surname' => 'required|string',
         ];
     }
 }

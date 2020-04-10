@@ -4,6 +4,7 @@ namespace App\Domain\TaskList\Repository;
 
 use App\Domain\TaskList\Models\TaskList\TaskList;
 use App\Domain\TaskList\Models\TaskList\TaskListId;
+use App\Domain\TaskList\Models\User\UserId;
 
 interface TaskListRepositoryInterface
 {
@@ -14,4 +15,6 @@ interface TaskListRepositoryInterface
     public function deleteTaskList(TaskListId $taskListId);
 
     public function updateTaskList(TaskList $taskList);
+
+    public function getTaskListsByUser(UserId $userId);
 }
